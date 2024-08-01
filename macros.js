@@ -33,7 +33,9 @@ module.exports.macroCommands = {
 };
 
 function formattedDate() {
-   return new Date().toDateString();
+  return new Date().toDateString();
+  // Without zero-padded date
+  // return new Date().toDateString().replace(/\s0(\d{1})\s/," $1 ")
 }
 
 function getEditor() {
