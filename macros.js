@@ -92,35 +92,27 @@ function terminalDate() {
 function togglePresentationMode() {
   const { workspace } = vscode
 
-  const min = 16;
-  const max = 24;
+  const min = 0;
+  const max = 2;
 
-  const editorConfiguration = workspace.getConfiguration('editor')
-  const fontSize = editorConfiguration.get('fontSize')
+  const zoomLevel = workspace.getConfiguration('window').get('zoomLevel')
 
-  if (!fontSize) {
-    return `Could not get font size.`;
+  if (!zoomLevel && zoomLevel !== 0) {
+    return `Could not get zoom level`;
   }
 
-  let newEditorFontSize;
-  let newTerminalFontSize;
+  let newZoomLevel;
 
-  if (fontSize < max) {
-    newEditorFontSize = max;
+  if (zoomLevel < max) {
+    newZoomLevel = max;
   } else {
-    newEditorFontSize = min;
+    newZoomLevel = min;
   }
 
-  // Clear any font size setting overrides in all settings levels (global / user / workspace)
-  [1,2,3].forEach(i => editorConfiguration.update('fontSize', undefined, i))
+  // Clear any zoom level setting overrides in all settings levels (global / user / workspace)
+  [1,2,3].forEach(i => workspace.getConfiguration('window').update('zoomLevel', undefined, i))
 
-  // Set editor font size across all application windows
-  editorConfiguration.update('fontSize', newEditorFontSize, 1)
-
-  // Set terminal font size across all application windows
-  newTerminalFontSize = Math.round(newEditorFontSize * 0.8)
-  const terminalConfiguration = workspace.getConfiguration('terminal.integrated')
-  terminalConfiguration.update('fontSize', newTerminalFontSize, 1)
+  workspace.getConfiguration('window').update('zoomLevel', newZoomLevel, 1)
 }
 
 /* Tests */
