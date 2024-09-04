@@ -96,7 +96,6 @@ function togglePresentationMode() {
   const max = 24;
 
   const editorConfiguration = workspace.getConfiguration('editor')
-  const terminalConfiguration = workspace.getConfiguration('terminal.integrated')
   const fontSize = editorConfiguration.get('fontSize')
 
   if (!fontSize) {
@@ -112,10 +111,15 @@ function togglePresentationMode() {
     newEditorFontSize = min;
   }
 
+  // Clear any font size setting overrides in all settings levels (global / user / workspace)
   [1,2,3].forEach(i => editorConfiguration.update('fontSize', undefined, i))
+
+  // Set editor font size across all application windows
   editorConfiguration.update('fontSize', newEditorFontSize, 1)
 
-  newTerminalFontSize = Math.round(newEditorFontSize * 0.8125)
+  // Set terminal font size across all application windows
+  newTerminalFontSize = Math.round(newEditorFontSize * 0.8)
+  const terminalConfiguration = workspace.getConfiguration('terminal.integrated')
   terminalConfiguration.update('fontSize', newTerminalFontSize, 1)
 }
 
