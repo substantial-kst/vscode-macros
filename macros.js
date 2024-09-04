@@ -1,5 +1,6 @@
 const vscode = require('vscode');
 
+
 /**
  * Macro configuration settings
  * { [name: string]: {              ... Name of the macro
@@ -18,16 +19,20 @@ module.exports.macroCommands = {
     no: 2,
     func: terminalDate
   },
-  CreateContext: {
+  TogglePresentationMode: {
     no: 3,
+    func: togglePresentationMode
+  },
+  CreateContext: {
+    no: 4,
     func: createContextBlock
   },
   CreateTest: {
-    no: 4,
+    no: 5,
     func: createTestBlock
   },
   GenerateRubyTestFile: {
-    no: 5,
+    no: 6,
     func: generateRubyTestFile
   }
 };
@@ -83,6 +88,38 @@ function terminalDate() {
    }
    activeTerminal.sendText(formattedDate(), false)
 }
+
+function togglePresentationMode() {
+  const { workspace } = vscode
+
+  const min = 16;
+  const max = 24;
+
+  const editorConfiguration = workspace.getConfiguration('editor')
+  const terminalConfiguration = workspace.getConfiguration('terminal.integrated')
+  const fontSize = editorConfiguration.get('fontSize')
+
+  if (!fontSize) {
+    return `Could not get font size.`;
+  }
+
+  let newEditorFontSize;
+  let newTerminalFontSize;
+
+  if (fontSize < max) {
+    newEditorFontSize = max;
+  } else {
+    newEditorFontSize = min;
+  }
+
+  [1,2,3].forEach(i => editorConfiguration.update('fontSize', undefined, i))
+  editorConfiguration.update('fontSize', newEditorFontSize, 1)
+
+  newTerminalFontSize = Math.round(newEditorFontSize * 0.8125)
+  terminalConfiguration.update('fontSize', newTerminalFontSize, 1)
+}
+
+/* Tests */
 
 function createContextBlock() {
   const { text, selection, editor } = getHighlightedEditorText();
