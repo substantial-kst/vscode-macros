@@ -91,28 +91,38 @@ function terminalDate() {
 
 function togglePresentationMode() {
   const { workspace } = vscode
+  const configuration = workspace.getConfiguration()
 
-  const min = 0;
-  const max = 2;
+  const settings = {
+    presentation: {
+      'window.zoomLevel': 2,
+      'workbench.colorTheme': 'Hop Light'
+    },
+    solo: {
+      'window.zoomLevel': 0,
+      'workbench.colorTheme': 'Gruvbox Dark Hard'
+    }
+  }
 
-  const zoomLevel = workspace.getConfiguration('window').get('zoomLevel')
+  const zoomLevel = configuration.get('window.zoomLevel')
 
   if (!zoomLevel && zoomLevel !== 0) {
     return `Could not get zoom level`;
   }
 
-  let newZoomLevel;
+  const isCurrentModePresentation = zoomLevel === settings.presentation['window.zoomLevel']
 
-  if (zoomLevel < max) {
-    newZoomLevel = max;
-  } else {
-    newZoomLevel = min;
+  const newSettingsKey = isCurrentModePresentation ? 'solo' : 'presentation';
+  const newSettings = settings[newSettingsKey]
+
+  if (!newSettings) {
+    return `Could not get new settings: ${newSettings}`
   }
 
   // Clear any zoom level setting overrides in all settings levels (global / user / workspace)
-  [1,2,3].forEach(i => workspace.getConfiguration('window').update('zoomLevel', undefined, i))
+  [1,2,3].forEach(i => configuration.update('window.zoomLevel', undefined, i))
 
-  workspace.getConfiguration('window').update('zoomLevel', newZoomLevel, 1)
+  Object.entries(newSettings).forEach(([key, value]) => configuration.update(key, value, 1))
 }
 
 /* Tests */
