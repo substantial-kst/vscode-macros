@@ -94,7 +94,7 @@ function togglePresentationMode() {
 
   const settings = {
     presentation: {
-      'window.zoomLevel': 2,
+      'window.zoomLevel': .5,
       'workbench.colorTheme': 'Hop Light'
     },
     solo: {
